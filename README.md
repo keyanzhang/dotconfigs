@@ -1,3 +1,3 @@
 dotconfigs
 ==========
-You don't need a readme, do you?
+You don't need a readme, do ya?
