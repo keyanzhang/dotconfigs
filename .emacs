@@ -1,16 +1,62 @@
 ;; package
 (require 'package)
 (add-to-list 'package-archives
-             '("melpa" . "http://melpa.milkbox.net/packages/") t)
-;; (add-to-list 'package-archives
-;;              '("marmalade" . "http://marmalade-repo.org/packages/") t)
-;; (add-to-list 'package-archives
-;;              '("gnu" . "http://elpa.gnu.org/packages/") t)
+             '("melpa" . "http://melpa.org/packages/") t)
+(add-to-list 'package-archives
+             '("melpa-stable" . "http://stable.melpa.org/packages/") t)
+(add-to-list 'package-archives
+             '("marmalade" . "http://marmalade-repo.org/packages/"))
 
 (package-initialize)
 
 (let ((default-directory "~/.emacs.d/elpa"))
   (normal-top-level-add-subdirs-to-load-path))
+
+
+;; $PATH from shell
+(when (memq window-system '(mac ns))
+  (exec-path-from-shell-initialize))
+
+
+;; ghc-mod
+(let ((my-cabal-path (expand-file-name "~/.cabal/bin")))
+  (setenv "PATH" (concat my-cabal-path ":" (getenv "PATH")))
+  (add-to-list 'exec-path my-cabal-path))
+
+(autoload 'ghc-init "ghc" nil t)
+(autoload 'ghc-debug "ghc" nil t)
+(add-hook 'haskell-mode-hook (lambda () (ghc-init)))
+
+
+;; haskell
+(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+
+
+;; chez-scheme
+(defun file-path-to-clipboard ()
+  "copies the current buffer's file path to the clipboard"
+  (interactive)
+  (let ((filename (buffer-file-name)))
+    (when filename
+      (kill-new filename)
+      (message "Copied: '%s'" filename))))
+
+(global-set-key "\C-c\ \C-f" 'file-path-to-clipboard)
+
+(fset 'p423-import-lib
+   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([67108896 67108896 134217788 M-right right 11 25 24 111 40 105 109 112 111 114 116 32 25 41 return 24 111 21 67108896 21 67108896] 0 "%d")) arg)))
+
+(add-hook 'scheme-mode-hook
+          (lambda ()
+            (local-set-key
+             (kbd "M-RET")
+             'p423-import-lib)))
+
+(defun scheme-mode-quack-hook ()
+  (require 'quack)
+  (setq quack-fontify-style 'emacs))
+
+(add-hook 'scheme-mode-hook 'scheme-mode-quack-hook)
 
 
 ;; paredit-mode
@@ -47,6 +93,7 @@
 
 ;; linum-mode
 (global-linum-mode 1)
+(setq linum-format 'dynamic)
 
 
 ;; helm-mode
@@ -84,31 +131,61 @@
   (add-hook 'visual-line-mode-hook 'my-activate-adaptive-wrap-prefix-mode))
 
 (add-hook 'minibuffer-setup-hook
-	  (lambda ()
-	    (visual-line-mode -1)))
+      (lambda ()
+        (visual-line-mode -1)))
 
 
 ;; no tool bar
 (tool-bar-mode -1)
 
 
-;; quick opacity toggle
+;; cursor-type
+(setq-default cursor-type '(bar . 1))
+
+
+;; Quick opacity toggle
 (defun my-increase-opacity ()
   (interactive)
   (let ((oldv (frame-parameter (selected-frame) 'alpha)))
     (let ((v (if (null oldv) 100
-	       (if (> (+ oldv 2) 100) 100 (+ oldv 2)))))
+           (if (> (+ oldv 2) 100) 100 (+ oldv 2)))))
       (set-frame-parameter (selected-frame) 'alpha v))))
 
 (defun my-decrease-opacity ()
   (interactive)
   (let ((oldv (frame-parameter (selected-frame) 'alpha)))
     (let ((v (if (null oldv) 100
-	       (if (< (- oldv 2) 20) 20 (- oldv 2)))))
+           (if (< (- oldv 2) 20) 20 (- oldv 2)))))
       (set-frame-parameter (selected-frame) 'alpha v))))
 
 (global-set-key [(meta triple-wheel-up)] 'my-increase-opacity)
 (global-set-key [(meta triple-wheel-down)] 'my-decrease-opacity)
+
+
+;; pin packages
+(add-to-list 'package-pinned-packages '(auto-complete . "melpa-stable") t)
+(add-to-list 'package-pinned-packages '(cider . "melpa-stable") t)
+(add-to-list 'package-pinned-packages '(clojure-mode . "melpa-stable") t)
+(add-to-list 'package-pinned-packages '(coffee-mode . "melpa-stable") t)
+(add-to-list 'package-pinned-packages '(color-theme-sanityinc-solarized . "melpa-stable") t)
+(add-to-list 'package-pinned-packages '(color-theme-sanityinc-tomorrow . "melpa-stable") t)
+(add-to-list 'package-pinned-packages '(dash . "melpa-stable") t)
+(add-to-list 'package-pinned-packages '(exec-path-from-shell . "melpa-stable") t)
+(add-to-list 'package-pinned-packages '(ghc . "melpa-stable") t)
+(add-to-list 'package-pinned-packages '(haskell-mode . "melpa-stable") t)
+(add-to-list 'package-pinned-packages '(helm . "melpa-stable") t)
+(add-to-list 'package-pinned-packages '(js2-mode . "melpa-stable") t)
+(add-to-list 'package-pinned-packages '(markdown-mode . "melpa-stable") t)
+(add-to-list 'package-pinned-packages '(multiple-cursors . "melpa-stable") t)
+(add-to-list 'package-pinned-packages '(paredit . "melpa-stable") t)
+(add-to-list 'package-pinned-packages '(quack . "marmalade") t)
+(add-to-list 'package-pinned-packages '(racket-mode . "melpa") t)
+(add-to-list 'package-pinned-packages '(rainbow-delimiters . "melpa-stable") t)
+(add-to-list 'package-pinned-packages '(slime . "melpa-stable") t)
+
+
+;; scheme style comments
+(global-set-key (kbd "C-;") 'comment-or-uncomment-region)
 
 
 ;; mac system shortcuts
@@ -122,18 +199,14 @@
 (global-set-key [(hyper z)] 'undo)
 
 
-;; sublime style shortcuts
-(global-set-key [(hyper /)] 'comment-or-uncomment-region)
-
-
 ;; mac option key as meta
 (defun mac-switch-meta nil 
   "switch meta between Option and Command"
   (interactive)
   (if (eq mac-option-modifier nil)
       (progn
-	(setq mac-option-modifier 'meta)
-	(setq mac-command-modifier 'hyper))
+    (setq mac-option-modifier 'meta)
+    (setq mac-command-modifier 'hyper))
     (progn 
       (setq mac-option-modifier nil)
       (setq mac-command-modifier 'meta))))
@@ -148,60 +221,27 @@
 (mac-set-option-as-meta)
 
 
-;; don't touch
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(ac-auto-start t)
- '(ansi-color-faces-vector
-   [default bold shadow italic underline bold bold-italic bold])
- '(ansi-color-names-vector
-   ["#343d46" "#bf616a" "#a3be8c" "#ebcb8b" "#8fa1b3" "#b48ead" "#8fa1b3" "#dfe1e8"])
- '(ansi-term-color-vector
-   [unspecified "#343d46" "#bf616a" "#a3be8c" "#ebcb8b" "#8fa1b3" "#b48ead" "#8fa1b3" "#dfe1e8"])
- '(coffee-indent-tabs-mode nil)
- '(coffee-tab-width 2)
- '(custom-enabled-themes (quote (base16-ocean-dark)))
+ '(custom-enabled-themes (quote (sanityinc-tomorrow-eighties)))
  '(custom-safe-themes
    (quote
-    ("e027af9a75cf334e3992d4283ae1e110596617b345f304b73ab9503a2e93c048" "48a4c6ddfec61c550e585274a8cd3d561dbaad1f7308c76fa59ee975d01c3820" "9c80ac7a9056844e850a9c518c7da91cc82e00641bcfcc90e78dc60c3a93a4ee" "0d4002022c6ecfc203b772dfa9c017aee6209cbca67fa694174b9b89e14a1ab0" "93704bcb6fd547ef60d5e92b3b7772f7ed138b2227f7a92fc0527733f434b0b9" "44350b5b6c90a880eb4d173884ea1f340320b46dc1c9cc98785f60066740030a" "41b6698b5f9ab241ad6c30aea8c9f53d539e23ad4e3963abff4b57c0f8bf6730" "53e29ea3d0251198924328fd943d6ead860e9f47af8d22f0b764d11168455a8e" "45bb2cffcb74aa1a22cb472eec6b68371766c42ec4027e7752062868bb15a38a" "ef67c2b7844e55223d15e5bfd6bc54de0752d356f89b7f02308838abf2726323" "1affe85e8ae2667fb571fc8331e1e12840746dae5c46112d5abb0c3a973f5f5a" "51bea7765ddaee2aac2983fac8099ec7d62dff47b708aa3595ad29899e9e9e44" "e53cc4144192bb4e4ed10a3fa3e7442cae4c3d231df8822f6c02f1220a0d259a" "978ff9496928cc94639cb1084004bf64235c5c7fb0cfbcc38a3871eb95fa88f6" default)))
- '(fci-rule-color "#343d46")
- '(fringe-mode (quote (0)) nil (fringe))
- '(global-auto-complete-mode nil)
- '(indicate-buffer-boundaries (quote ((t . right) (top . left))))
- '(markdown-indent-on-enter nil)
- '(python-shell-interpreter "python3")
- '(racket-mode-pretty-lambda nil)
- '(racket-program "/usr/local/bin/racket")
- '(raco-program "/usr/local/bin/raco")
- '(show-paren-mode t)
- '(vc-annotate-background nil)
- '(vc-annotate-color-map
+    ("628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" default)))
+ '(quack-default-program "p423petite")
+ '(quack-programs
    (quote
-    ((20 . "#bf616a")
-     (40 . "#DCA432")
-     (60 . "#ebcb8b")
-     (80 . "#B4EB89")
-     (100 . "#89EBCA")
-     (120 . "#89AAEB")
-     (140 . "#C189EB")
-     (160 . "#bf616a")
-     (180 . "#DCA432")
-     (200 . "#ebcb8b")
-     (220 . "#B4EB89")
-     (240 . "#89EBCA")
-     (260 . "#89AAEB")
-     (280 . "#C189EB")
-     (300 . "#bf616a")
-     (320 . "#DCA432")
-     (340 . "#ebcb8b")
-     (360 . "#B4EB89"))))
- '(vc-annotate-very-old-color nil))
+    ("guile" "mit-scheme" "petite" "racket" "racket -il typed/racket" "scheme" "p423petite")))
+ '(scheme-program-name "p423petite")
+ '(show-paren-mode t)
+ '(tool-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:family "Source Code Pro" :foundry "nil" :slant normal :weight light :height 150 :width normal)))))
+ '(default ((t (:family "Source Code Pro" :foundry "nil" :slant normal :weight normal :height 141 :width normal)))))
+
+
