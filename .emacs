@@ -44,7 +44,10 @@
 (global-set-key "\C-c\ \C-f" 'file-path-to-clipboard)
 
 (fset 'p423-import-lib
-   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([67108896 67108896 134217788 M-right right 11 25 24 111 40 105 109 112 111 114 116 32 25 41 return 24 111 21 67108896 21 67108896] 0 "%d")) arg)))
+      (lambda (&optional arg)
+	"Keyboard macro."
+	(interactive "p")
+	(kmacro-exec-ring-item (quote ([67108896 67108896 134217788 M-right right 11 25 24 111 40 105 109 112 111 114 116 32 25 41 return 24 111 21 67108896 21 67108896] 0 "%d")) arg)))
 
 (add-hook 'scheme-mode-hook
           (lambda ()
@@ -131,8 +134,8 @@
   (add-hook 'visual-line-mode-hook 'my-activate-adaptive-wrap-prefix-mode))
 
 (add-hook 'minibuffer-setup-hook
-      (lambda ()
-        (visual-line-mode -1)))
+	  (lambda ()
+	    (visual-line-mode -1)))
 
 
 ;; no tool bar
@@ -148,14 +151,14 @@
   (interactive)
   (let ((oldv (frame-parameter (selected-frame) 'alpha)))
     (let ((v (if (null oldv) 100
-           (if (> (+ oldv 2) 100) 100 (+ oldv 2)))))
+	       (if (> (+ oldv 2) 100) 100 (+ oldv 2)))))
       (set-frame-parameter (selected-frame) 'alpha v))))
 
 (defun my-decrease-opacity ()
   (interactive)
   (let ((oldv (frame-parameter (selected-frame) 'alpha)))
     (let ((v (if (null oldv) 100
-           (if (< (- oldv 2) 20) 20 (- oldv 2)))))
+	       (if (< (- oldv 2) 20) 20 (- oldv 2)))))
       (set-frame-parameter (selected-frame) 'alpha v))))
 
 (global-set-key [(meta triple-wheel-up)] 'my-increase-opacity)
@@ -205,8 +208,8 @@
   (interactive)
   (if (eq mac-option-modifier nil)
       (progn
-    (setq mac-option-modifier 'meta)
-    (setq mac-command-modifier 'hyper))
+	(setq mac-option-modifier 'meta)
+	(setq mac-command-modifier 'hyper))
     (progn 
       (setq mac-option-modifier nil)
       (setq mac-command-modifier 'meta))))
