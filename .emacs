@@ -29,8 +29,10 @@
 
 
 ;; haskell
-(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
-
+;; (setq haskell-stylish-on-save t)
+;; (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
+;; (add-hook 'haskell-mode-hook 'structured-haskell-mode)
+;; (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
 
 ;; chez-scheme
 (defun file-path-to-clipboard ()
@@ -61,6 +63,7 @@
 
 (add-hook 'scheme-mode-hook 'scheme-mode-quack-hook)
 
+(put 'dethm 'scheme-indent-function 'defun)
 
 ;; paredit-mode
 (defun enable-nospace-paredit-mode ()
@@ -78,10 +81,12 @@
 (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
 
 
-;; racket repl
+;; racket-mode
 (add-hook 'racket-mode-hook
           '(lambda ()
              (define-key racket-mode-map (kbd "M-RET") 'racket-run)))
+
+(put 'pmatch 'racket-indent-function 1)
 
 
 ;; python repl
@@ -105,7 +110,7 @@
 
 ;; recentf-mode
 (recentf-mode 1)
-(setq recentf-max-menu-items 25)
+(setq recentf-max-menu-items 150)
 (global-set-key "\C-x\ \C-r" 'helm-recentf)
 
 
@@ -113,10 +118,14 @@
 (setq inhibit-splash-screen t
       initial-scratch-message nil)
 
-(setq make-backup-files nil)
-
 (defalias 'yes-or-no-p 'y-or-n-p)
 
+(setq bkup-dir "/Users/k/.emacs.d/bkup/")
+
+(setq backup-directory-alist
+      `((".*" . ,bkup-dir)))
+(setq auto-save-file-name-transforms
+      `((".*" ,bkup-dir t)))
 
 ;; multiple-cursors
 (require 'multiple-cursors)
@@ -185,10 +194,8 @@
 (add-to-list 'package-pinned-packages '(racket-mode . "melpa") t)
 (add-to-list 'package-pinned-packages '(rainbow-delimiters . "melpa-stable") t)
 (add-to-list 'package-pinned-packages '(slime . "melpa-stable") t)
+(add-to-list 'package-pinned-packages '(tuareg . "melpa-stable") t)
 
-
-;; scheme style comments
-(global-set-key (kbd "C-;") 'comment-or-uncomment-region)
 
 
 ;; mac system shortcuts
@@ -229,22 +236,56 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(ansi-color-faces-vector
+   [default bold shadow italic underline bold bold-italic bold])
+ '(ansi-color-names-vector
+   (vector "#657b83" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#fdf6e3"))
  '(custom-enabled-themes (quote (sanityinc-tomorrow-eighties)))
  '(custom-safe-themes
    (quote
-    ("628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" default)))
+    ("4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "82d2cac368ccdec2fcc7573f24c3f79654b78bf133096f9b40c20d97ec1d8016" "1b8d67b43ff1723960eb5e0cba512a2c7a2ad544ddb2533a90101fd1852b426e" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" "4cf3221feff536e2b3385209e9b9dc4c2e0818a69a1cdb4b522756bcdf4e00a4" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" default)))
+ '(fci-rule-color "#eee8d5")
+ '(haskell-mode-hook
+   (quote
+    (turn-on-haskell-indentation
+     (lambda nil
+       (ghc-init)))))
+ '(haskell-stylish-on-save t)
+ '(haskell-tags-on-save t)
  '(quack-default-program "p423petite")
  '(quack-programs
    (quote
     ("guile" "mit-scheme" "petite" "racket" "racket -il typed/racket" "scheme" "p423petite")))
  '(scheme-program-name "p423petite")
  '(show-paren-mode t)
- '(tool-bar-mode nil))
+ '(tool-bar-mode nil)
+ '(vc-annotate-background nil)
+ '(vc-annotate-color-map
+   (quote
+    ((20 . "#dc322f")
+     (40 . "#cb4b16")
+     (60 . "#b58900")
+     (80 . "#859900")
+     (100 . "#2aa198")
+     (120 . "#268bd2")
+     (140 . "#d33682")
+     (160 . "#6c71c4")
+     (180 . "#dc322f")
+     (200 . "#cb4b16")
+     (220 . "#b58900")
+     (240 . "#859900")
+     (260 . "#2aa198")
+     (280 . "#268bd2")
+     (300 . "#d33682")
+     (320 . "#6c71c4")
+     (340 . "#dc322f")
+     (360 . "#cb4b16"))))
+ '(vc-annotate-very-old-color nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:family "Source Code Pro" :foundry "nil" :slant normal :weight normal :height 141 :width normal)))))
+ '(default ((t (:family "Anonymous Pro" :foundry "nil" :slant normal :weight normal :height 140 :width normal)))))
 
 
