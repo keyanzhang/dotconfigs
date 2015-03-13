@@ -12,10 +12,61 @@
 (let ((default-directory "~/.emacs.d/elpa"))
   (normal-top-level-add-subdirs-to-load-path))
 
+;; HTML
+(require 'web-mode)
+(add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+
+(defun my-web-mode-hook ()
+  "Hooks for Web mode."
+  (setq web-mode-markup-indent-offset 2)
+  (setq web-mode-css-indent-offset 2)
+  (setq web-mode-code-indent-offset 2))
+
+(add-hook 'web-mode-hook  'my-web-mode-hook)
+
+(eval-after-load "web-mode"
+  '(define-key web-mode-map "{" 'paredit-open-curly))
+(eval-after-load "web-mode"
+  '(define-key web-mode-map "}" 'paredit-close-curly-and-newline))
+
+
+;; js
+(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+(add-hook 'js2-mode-hook 'skewer-mode)
+(eval-after-load "js2-mode"
+  '(define-key js2-mode-map (kbd "C-c C-l") 'skewer-load-buffer))
+(eval-after-load "js2-mode"
+  '(define-key js2-mode-map "{" 'paredit-open-curly))
+(eval-after-load "js2-mode"
+  '(define-key js2-mode-map "}" 'paredit-close-curly-and-newline))
+
+(require 'js-doc)
+(eval-after-load "js2-mode"
+  '(define-key js2-mode-map (kbd "C-c i") 'js-doc-insert-function-doc))
+
+
+;; R
+(require 'ess-site)
+
 
 ;; $PATH from shell
 (when (memq window-system '(mac ns))
   (exec-path-from-shell-initialize))
+
+
+;; markdown-mode
+(autoload 'markdown-mode "markdown-mode"
+  "Major mode for editing Markdown files" t)
+(add-to-list 'auto-mode-alist '("\\.mdown\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 
 
 ;; ghc-mod
@@ -64,6 +115,9 @@
 (add-hook 'scheme-mode-hook 'scheme-mode-quack-hook)
 
 (put 'dethm 'scheme-indent-function 'defun)
+(mapc (lambda (x) (put x 'scheme-indent-function 'defun))
+      '(locals ulocals spills frame-conflict locate new-frames call-live
+               register-conflict import export))
 
 ;; paredit-mode
 (defun enable-nospace-paredit-mode ()
@@ -126,6 +180,8 @@
       `((".*" . ,bkup-dir)))
 (setq auto-save-file-name-transforms
       `((".*" ,bkup-dir t)))
+
+(setq-default indent-tabs-mode nil)
 
 ;; multiple-cursors
 (require 'multiple-cursors)
@@ -195,7 +251,8 @@
 (add-to-list 'package-pinned-packages '(rainbow-delimiters . "melpa-stable") t)
 (add-to-list 'package-pinned-packages '(slime . "melpa-stable") t)
 (add-to-list 'package-pinned-packages '(tuareg . "melpa-stable") t)
-
+(add-to-list 'package-pinned-packages '(skewer-mode . "melpa-stable") t)
+(add-to-list 'package-pinned-packages '(web-mode . "melpa-stable") t)
 
 
 ;; mac system shortcuts
@@ -249,9 +306,10 @@
    (quote
     (turn-on-haskell-indentation
      (lambda nil
-       (ghc-init)))))
+       (ghc-init)))) t)
  '(haskell-stylish-on-save t)
  '(haskell-tags-on-save t)
+ '(markdown-indent-on-enter nil)
  '(quack-default-program "p423petite")
  '(quack-programs
    (quote
@@ -280,12 +338,11 @@
      (320 . "#6c71c4")
      (340 . "#dc322f")
      (360 . "#cb4b16"))))
- '(vc-annotate-very-old-color nil))
+ '(vc-annotate-very-old-color nil)
+ '(web-mode-code-indent-offset 2))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(default ((t (:family "Anonymous Pro" :foundry "nil" :slant normal :weight normal :height 140 :width normal)))))
-
-
