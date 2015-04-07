@@ -9,8 +9,74 @@
 
 (package-initialize)
 
+(setq pkg-ls
+      '(ace-jump-mode
+        adaptive-wrap
+        auctex
+        auto-complete
+        popup
+        cider
+        queue
+        pkg-info
+        epl
+        dash
+        clojure-mode
+        coffee-mode
+        color-theme-sanityinc-solarized
+        color-theme-sanityinc-tomorrow
+        dash-at-point
+        exec-path-from-shell
+        ghc
+        haskell-mode
+        helm
+        async
+        htmlize
+        js-doc
+        markdown-mode
+        multiple-cursors
+        paredit
+        quack
+        racket-mode
+        s
+        faceup
+        rainbow-delimiters
+        skewer-mode
+        js2-mode
+        simple-httpd
+        slime
+        smartparens
+        sml-mode
+        tuareg
+        caml
+        web-mode))
+
+(or (file-exists-p package-user-dir)
+    (package-refresh-contents))
+
+(dolist (p pkg-ls)
+  (unless (package-installed-p p)
+    (package-install p)))
+
 (let ((default-directory "~/.emacs.d/elpa"))
   (normal-top-level-add-subdirs-to-load-path))
+
+
+;; clojure
+(add-hook 'cider-mode-hook #'eldoc-mode)
+(setq nrepl-log-messages t)
+(setq nrepl-hide-special-buffers t)
+(setq cider-repl-result-prefix ";; => ")
+(setq cider-repl-display-in-current-window t)
+
+
+;; ace-jump-mode
+(autoload
+  'ace-jump-mode
+  "ace-jump-mode"
+  "Emacs quick move minor mode"
+  t)
+(define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
+
 
 ;; HTML
 (require 'web-mode)
@@ -29,12 +95,21 @@
   (setq web-mode-css-indent-offset 2)
   (setq web-mode-code-indent-offset 2))
 
-(add-hook 'web-mode-hook  'my-web-mode-hook)
+(add-hook 'web-mode-hook 'my-web-mode-hook)
 
-(eval-after-load "web-mode"
-  '(define-key web-mode-map "{" 'paredit-open-curly))
-(eval-after-load "web-mode"
-  '(define-key web-mode-map "}" 'paredit-close-curly-and-newline))
+;; (eval-after-load "web-mode"
+;;   '(define-key web-mode-map "{" 'paredit-open-curly))
+;; (eval-after-load "web-mode"
+;;   '(define-key web-mode-map "}" 'paredit-close-curly-and-newline))
+
+
+;; coffee
+(eval-after-load "coffee-mode"
+  '(define-key coffee-mode-map (kbd "C-c C-c") 'coffee-send-line))
+
+(eval-after-load "coffee-mode"
+  '(define-key coffee-mode-map (kbd "C-c C-l") 'coffee-send-buffer))
+
 
 
 ;; js
@@ -47,7 +122,21 @@
 (eval-after-load "js2-mode"
   '(define-key js2-mode-map "}" 'paredit-close-curly-and-newline))
 
+(defun skewer-reload-and-eval-defun ()
+  "skewer-load-buffer & skewer-eval-defun"
+  (interactive)
+  (skewer-load-buffer)
+  (skewer-eval-defun))
+
+(eval-after-load "js2-mode"
+  '(define-key js2-mode-map (kbd "C-c C-c") 'skewer-reload-and-eval-defun))
+
+
 (require 'js-doc)
+(setq js-doc-mail-address "kz5@indiana.edu"
+      js-doc-author (format "Keyan Zhang <%s>" js-doc-mail-address)
+      js-doc-url "http://keyanzhang.com"
+      js-doc-license "WTFPL v2")
 (eval-after-load "js2-mode"
   '(define-key js2-mode-map (kbd "C-c i") 'js-doc-insert-function-doc))
 
@@ -98,7 +187,7 @@
 
 (fset 'p423-import-lib
       (lambda (&optional arg)
-	"Keyboard macro."
+	"Poor man's keyboard macro to import a lib."
 	(interactive "p")
 	(kmacro-exec-ring-item (quote ([67108896 67108896 134217788 M-right right 11 25 24 111 40 105 109 112 111 114 116 32 25 41 return 24 111 21 67108896 21 67108896] 0 "%d")) arg)))
 
@@ -128,6 +217,14 @@
   (paredit-mode 1))
 
 (add-hook 'prog-mode-hook 'enable-nospace-paredit-mode)
+;; (add-hook 'racket-mode-hook 'enable-nospace-paredit-mode)
+;; (add-hook 'scheme-mode-hook 'enable-nospace-paredit-mode)
+;; (add-hook 'lisp-mode-hook 'enable-nospace-paredit-mode)
+
+;; give smartparens a try.
+
+;; (add-hook 'prog-mode-hook 'smartparens-mode)
+;; (add-hook 'prog-mode-hook 'smartparens-strict-mode)
 
 
 ;; rainbow-delimiters-mode
@@ -136,11 +233,14 @@
 
 
 ;; racket-mode
-(add-hook 'racket-mode-hook
-          '(lambda ()
-             (define-key racket-mode-map (kbd "M-RET") 'racket-run)))
+(mapc (lambda (x) (put x 'racket-indent-function 1))
+      '(pmatch pmatch-who))
 
-(put 'pmatch 'racket-indent-function 1)
+(eval-after-load "racket-mode"
+  '(define-key racket-mode-map (kbd "C-c C-c") 'racket-send-definition))
+(eval-after-load "racket-mode"
+  '(define-key racket-mode-map (kbd "M-RET") 'racket-run))
+
 
 
 ;; python repl
@@ -174,7 +274,7 @@
 
 (defalias 'yes-or-no-p 'y-or-n-p)
 
-(setq bkup-dir "/Users/k/.emacs.d/bkup/")
+(setq bkup-dir "/Users/k/.emacs.d/bkup/") ;; no more temp files in the folder
 
 (setq backup-directory-alist
       `((".*" . ,bkup-dir)))
@@ -226,6 +326,8 @@
 	       (if (< (- oldv 2) 20) 20 (- oldv 2)))))
       (set-frame-parameter (selected-frame) 'alpha v))))
 
+;; Meta + mousewheel-up: increase window opacity
+;; Meta + mousewheel-down: decrease opacity
 (global-set-key [(meta triple-wheel-up)] 'my-increase-opacity)
 (global-set-key [(meta triple-wheel-down)] 'my-decrease-opacity)
 
@@ -253,6 +355,9 @@
 (add-to-list 'package-pinned-packages '(tuareg . "melpa-stable") t)
 (add-to-list 'package-pinned-packages '(skewer-mode . "melpa-stable") t)
 (add-to-list 'package-pinned-packages '(web-mode . "melpa-stable") t)
+(add-to-list 'package-pinned-packages '(ace-jump-mode . "melpa-stable") t)
+(add-to-list 'package-pinned-packages '(htmlize . "marmalade") t)
+(add-to-list 'package-pinned-packages '(smartparens . "melpa-stable") t)
 
 
 ;; mac system shortcuts
@@ -297,6 +402,7 @@
    [default bold shadow italic underline bold bold-italic bold])
  '(ansi-color-names-vector
    (vector "#657b83" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#fdf6e3"))
+ '(coffee-tab-width 2)
  '(custom-enabled-themes (quote (sanityinc-tomorrow-eighties)))
  '(custom-safe-themes
    (quote
@@ -309,6 +415,9 @@
        (ghc-init)))) t)
  '(haskell-stylish-on-save t)
  '(haskell-tags-on-save t)
+ '(js-indent-level 2)
+ '(js2-basic-offset 2)
+ '(js2-indent-switch-body t)
  '(markdown-indent-on-enter nil)
  '(quack-default-program "p423petite")
  '(quack-programs
@@ -346,3 +455,5 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(default ((t (:family "Anonymous Pro" :foundry "nil" :slant normal :weight normal :height 140 :width normal)))))
+
+
