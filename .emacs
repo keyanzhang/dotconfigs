@@ -5,12 +5,13 @@
 (add-to-list 'package-archives
              '("melpa-stable" . "http://stable.melpa.org/packages/") t)
 (add-to-list 'package-archives
-             '("marmalade" . "http://marmalade-repo.org/packages/"))
+             '("marmalade" . "http://marmalade-repo.org/packages/") t)
 
 (package-initialize)
 
 (setq pkg-ls
-      '(ace-jump-mode
+      '(emmet-mode
+        ace-jump-mode
         adaptive-wrap
         auctex
         auto-complete
@@ -76,6 +77,7 @@
   "Emacs quick move minor mode"
   t)
 (define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
+(global-set-key [(hyper f)] 'ace-jump-mode)
 
 
 ;; HTML
@@ -91,16 +93,15 @@
 
 (defun my-web-mode-hook ()
   "Hooks for Web mode."
+  (interactive)
   (setq web-mode-markup-indent-offset 2)
   (setq web-mode-css-indent-offset 2)
-  (setq web-mode-code-indent-offset 2))
+  (setq web-mode-code-indent-offset 2)
+  (disable-paredit-mode)
+  (smartparens-strict-mode)
+  (emmet-mode))
 
 (add-hook 'web-mode-hook 'my-web-mode-hook)
-
-;; (eval-after-load "web-mode"
-;;   '(define-key web-mode-map "{" 'paredit-open-curly))
-;; (eval-after-load "web-mode"
-;;   '(define-key web-mode-map "}" 'paredit-close-curly-and-newline))
 
 
 ;; coffee
@@ -358,6 +359,7 @@
 (add-to-list 'package-pinned-packages '(ace-jump-mode . "melpa-stable") t)
 (add-to-list 'package-pinned-packages '(htmlize . "marmalade") t)
 (add-to-list 'package-pinned-packages '(smartparens . "melpa-stable") t)
+(add-to-list 'package-pinned-packages '(emmet-mode . "marmalade") t)
 
 
 ;; mac system shortcuts
