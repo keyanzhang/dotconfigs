@@ -8,31 +8,9 @@
             ]]>
         </url>
     </vkopenurldef>
-    <appdef>
-        <appname>Apple_Mail_app</appname>
-        <equal>com.apple.mail</equal>
-    </appdef>
-    <item>
-        <name>Delete = [Archive] on Mail.app</name>
-        <identifier>private.appdef_mail</identifier>
-        <only>Apple_Mail_app</only>
-        <autogen>__KeyToKey__ KeyCode::DELETE,
-            KeyCode::A, ModifierFlag::CONTROL_L | ModifierFlag::COMMAND_L</autogen>
-    </item>
-    <appdef>
-        <appname>Emacs_app</appname>
-        <equal>org.gnu.Emacs</equal>
-    </appdef>
-    <item>
-        <name>LOption = Meta on Emacs.app</name>
-        <identifier>private.appdef_emacs</identifier>
-        <only>Emacs_app</only>
-        <autogen>__KeyToKey__ KeyCode::OPTION_L,
-            KeyCode::ESCAPE</autogen>
-    </item>
     <item>
         <name>Fn Alone: Move mouse cursor to the center of the frontmost app's title bar</name>
-        <identifier>remap.move_mouse_cursor_title_bar_fn_alone</identifier>
+        <identifier>remap.fn_alone_move_mouse_cursor_to_title_bar</identifier>
         <autogen>
           __KeyOverlaidModifier__
           KeyCode::FN,
@@ -48,7 +26,7 @@
       </item>
     <item>
         <name>HHKB Style: RCtrl-I = ↑</name>
-        <identifier>remap.hhkb_style_up_with_control_r</identifier>
+        <identifier>remap.hhkb_style_up_with_control_i</identifier>
         <autogen>
           __KeyToKey__ 
           KeyCode::I, ModifierFlag::CONTROL_R,
@@ -57,7 +35,7 @@
     </item>
     <item>
         <name>HHKB Style: RCtrl-M = ↓</name>
-        <identifier>remap.hhkb_style_down_with_control_r</identifier>
+        <identifier>remap.hhkb_style_down_with_control_m</identifier>
         <autogen>
           __KeyToKey__ 
           KeyCode::M, ModifierFlag::CONTROL_R,
@@ -66,7 +44,7 @@
     </item>
     <item>
         <name>HHKB Style: RCtrl-K = →</name>
-        <identifier>remap.hhkb_style_right_with_control_r</identifier>
+        <identifier>remap.hhkb_style_right_with_control_k</identifier>
         <autogen>
           __KeyToKey__ 
           KeyCode::K, ModifierFlag::CONTROL_R,
@@ -75,7 +53,7 @@
     </item>
     <item>
         <name>HHKB Style: RCtrl-J = ←</name>
-        <identifier>remap.hhkb_style_left_with_control_r</identifier>
+        <identifier>remap.hhkb_style_left_with_control_j</identifier>
         <autogen>
           __KeyToKey__ 
           KeyCode::J, ModifierFlag::CONTROL_R,
@@ -85,7 +63,7 @@
     <modifierdef>K_HYPER</modifierdef>
     <item>
       <name>LCtrl-Space Alone -> Hyper</name>
-      <identifier>remap.space_alone_to_hyper</identifier>
+      <identifier>remap.ctrl_space_alone_to_hyper</identifier>
       <autogen>
         __KeyOverlaidModifier__
         <!-- from -->
