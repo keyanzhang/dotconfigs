@@ -1,0 +1,163 @@
+<?xml version="1.0"?>
+<root>
+    <vkopenurldef>
+        <name>KeyCode::VK_OPEN_URL_SHELL_warp_mouse_cursor_position_front_window_title_bar</name>
+        <url type="shell">
+            <![CDATA[
+                /Applications/Karabiner.app/Contents/Library/utilities/bin/warp-mouse-cursor-position front_window top 0 center +5
+            ]]>
+        </url>
+    </vkopenurldef>
+    <appdef>
+        <appname>Apple_Mail_app</appname>
+        <equal>com.apple.mail</equal>
+    </appdef>
+    <item>
+        <name>Delete = [Archive] on Mail.app</name>
+        <identifier>private.appdef_mail</identifier>
+        <only>Apple_Mail_app</only>
+        <autogen>__KeyToKey__ KeyCode::DELETE,
+            KeyCode::A, ModifierFlag::CONTROL_L | ModifierFlag::COMMAND_L</autogen>
+    </item>
+    <appdef>
+        <appname>Emacs_app</appname>
+        <equal>org.gnu.Emacs</equal>
+    </appdef>
+    <item>
+        <name>LOption = Meta on Emacs.app</name>
+        <identifier>private.appdef_emacs</identifier>
+        <only>Emacs_app</only>
+        <autogen>__KeyToKey__ KeyCode::OPTION_L,
+            KeyCode::ESCAPE</autogen>
+    </item>
+    <item>
+        <name>Fn Alone: Move mouse cursor to the center of the frontmost app's title bar</name>
+        <identifier>remap.move_mouse_cursor_title_bar_fn_alone</identifier>
+        <autogen>
+          __KeyOverlaidModifier__
+          KeyCode::FN,
+
+          @begin
+          KeyCode::FN,
+          @end
+
+          @begin
+          KeyCode::VK_OPEN_URL_SHELL_warp_mouse_cursor_position_front_window_title_bar,
+          @end
+        </autogen>
+      </item>
+    <item>
+        <name>HHKB Style: RCtrl-I = ↑</name>
+        <identifier>remap.hhkb_style_up_with_control_r</identifier>
+        <autogen>
+          __KeyToKey__ 
+          KeyCode::I, ModifierFlag::CONTROL_R,
+          KeyCode::CURSOR_UP
+        </autogen>
+    </item>
+    <item>
+        <name>HHKB Style: RCtrl-M = ↓</name>
+        <identifier>remap.hhkb_style_down_with_control_r</identifier>
+        <autogen>
+          __KeyToKey__ 
+          KeyCode::M, ModifierFlag::CONTROL_R,
+          KeyCode::CURSOR_DOWN
+        </autogen>
+    </item>
+    <item>
+        <name>HHKB Style: RCtrl-K = →</name>
+        <identifier>remap.hhkb_style_right_with_control_r</identifier>
+        <autogen>
+          __KeyToKey__ 
+          KeyCode::K, ModifierFlag::CONTROL_R,
+          KeyCode::CURSOR_RIGHT
+        </autogen>
+    </item>
+    <item>
+        <name>HHKB Style: RCtrl-J = ←</name>
+        <identifier>remap.hhkb_style_left_with_control_r</identifier>
+        <autogen>
+          __KeyToKey__ 
+          KeyCode::J, ModifierFlag::CONTROL_R,
+          KeyCode::CURSOR_LEFT
+        </autogen>
+    </item>
+    <modifierdef>K_HYPER</modifierdef>
+    <item>
+      <name>LCtrl-Space Alone -> Hyper</name>
+      <identifier>remap.space_alone_to_hyper</identifier>
+      <autogen>
+        __KeyOverlaidModifier__
+        <!-- from -->
+        KeyCode::SPACE, ModifierFlag::CONTROL_L,
+        <!-- to -->
+        KeyCode::VK_MODIFIER_K_HYPER,
+        <!-- alone -->
+        KeyCode::SPACE,
+      </autogen>
+    </item>
+    <item>
+        <name>Hyper-W = ↑</name>
+        <identifier>remap.hyper_w_to_up</identifier>
+        <autogen>
+          __KeyToKey__ 
+          KeyCode::W, ModifierFlag::K_HYPER,
+          KeyCode::CURSOR_UP
+        </autogen>
+    </item>
+    <item>
+        <name>Hyper-A = ←</name>
+        <identifier>remap.hyper_a_to_left</identifier>
+        <autogen>
+          __KeyToKey__ 
+          KeyCode::A, ModifierFlag::K_HYPER,
+          KeyCode::CURSOR_LEFT
+        </autogen>
+    </item>
+    <item>
+        <name>Hyper-S = ↓</name>
+        <identifier>remap.hyper_s_to_down</identifier>
+        <autogen>
+          __KeyToKey__ 
+          KeyCode::S, ModifierFlag::K_HYPER,
+          KeyCode::CURSOR_DOWN
+        </autogen>
+    </item>
+    <item>
+        <name>Hyper-D = →</name>
+        <identifier>remap.hyper_d_to_right</identifier>
+        <autogen>
+          __KeyToKey__ 
+          KeyCode::D, ModifierFlag::K_HYPER,
+          KeyCode::CURSOR_RIGHT
+        </autogen>
+    </item>
+    <item>
+        <name>Hyper-Q = PageUp</name>
+        <identifier>remap.hyper_q_to_pageup</identifier>
+        <autogen>
+          __KeyToKey__ 
+          KeyCode::Q, ModifierFlag::K_HYPER,
+          KeyCode::PAGEUP
+        </autogen>
+    </item>
+    <item>
+        <name>Hyper-E = PageDoen</name>
+        <identifier>remap.hyper_e_to_pagedown</identifier>
+        <autogen>
+          __KeyToKey__ 
+          KeyCode::E, ModifierFlag::K_HYPER,
+          KeyCode::PAGEDOWN
+        </autogen>
+    </item>
+    <item>
+        <name>Ctrl-LOption-D = Option-→, Option-Delete</name>
+        <identifier>remap.control_option_d_to_option_right_and_option_delete</identifier>
+        <autogen>
+          __KeyToKey__ 
+          KeyCode::D, ModifierFlag::CONTROL_L | ModifierFlag::OPTION_L,
+          KeyCode::CURSOR_RIGHT, ModifierFlag::OPTION_L,
+          KeyCode::DELETE, ModifierFlag::OPTION_L
+        </autogen>
+    </item>
+</root>
